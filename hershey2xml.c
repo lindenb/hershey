@@ -6,6 +6,28 @@
 #define MIN(a,b) (a < b ? a: b)
 #define MAX(a,b) (a > b ? a: b)
 
+	
+static const int alphabets[]=
+	{
+	1,27,
+	501,527,
+	601,627,651,
+	1001,1027,1051,
+	1101,1127,1151,
+	2001,2027,2051,
+	2101,2127,2151,
+	2501,2527,2551,
+	2601,2627,
+	2801,
+	3001,3101,3151,
+	3301,
+	3401,
+	3501,
+	3601,
+	3801,
+	-1,
+	};
+
 static int fgetskipcr()
 	{
 	int c;
@@ -22,8 +44,15 @@ int main(int argc,char** argv)
 	{
 	int maxx=0,maxy=0;
 	int minx=0,miny=0;
-	
+	int a=0;
 	fputs("<?xml version=\'1.0\'?>\n<hershey>\n",stdout);
+	fputs("  <styles>\n",stdout);
+	while(alphabets[a]!=-1)
+		{
+		printf("    <style id=\"%d\">Style%d</style>\n",(a+1),(a+1));
+		++a;
+		}
+	fputs("  </styles>\n",stdout);
 	for(;;)
 		{
 		int letter_id=0,num_vertices=0,i=0;
@@ -92,12 +121,24 @@ int main(int argc,char** argv)
 			
 			if(vertex==1)
 				{
-				printf("  <letter id=\"%d\" count=\"%d\" left=\"%d\" right=\"%d\">\n",
+				printf("  <letter id=\"%d\" count=\"%d\" left=\"%d\" right=\"%d\"",
 					letter_id,
 					num_vertices,
 					c1,
 					c2
 					);
+				a=0;
+				while(alphabets[a]!=-1)
+					{
+					if(!(letter_id<alphabets[a] || letter_id>=(alphabets[a]+26)))
+						{
+						printf(" style=\"%d\"",a+1);
+						printf(" char=\"%c\"",'a'+(char)(letter_id-alphabets[a]));
+						break;
+						}
+					++a;
+					}
+				fputs(">\n",stdout);
 				prev_was_R=1;
 				}
 			else

@@ -61,18 +61,21 @@
 <xsl:attribute name="xlink:href"><xsl:value-of select= "concat('#',@id)"/></xsl:attribute>
 <xsl:attribute name="x">0</xsl:attribute>
 <xsl:attribute name="y"><xsl:value-of select= "$size * (position() - 1)"/></xsl:attribute>
+<xsl:attribute name="title"><xsl:value-of select="@id"/></xsl:attribute>
 </svg:use>
 
 <svg:use>
 <xsl:attribute name="xlink:href"><xsl:value-of select= "concat('#',@id)"/></xsl:attribute>
 <xsl:attribute name="x"><xsl:value-of select= "$size * 1"/></xsl:attribute>
 <xsl:attribute name="y"><xsl:value-of select= "$size * (position() - 1)"/></xsl:attribute>
+<xsl:attribute name="title"><xsl:value-of select="@id"/></xsl:attribute>
 </svg:use>
 
 <svg:use>
 <xsl:attribute name="xlink:href"><xsl:value-of select= "concat('#',@id)"/></xsl:attribute>
 <xsl:attribute name="x"><xsl:value-of select= "$size * 2"/></xsl:attribute>
 <xsl:attribute name="y"><xsl:value-of select= "$size * (position() - 1)"/></xsl:attribute>
+<xsl:attribute name="title"><xsl:value-of select="@id"/></xsl:attribute>
 </svg:use>
 
 </xsl:for-each>
