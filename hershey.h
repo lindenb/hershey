@@ -24,23 +24,53 @@ THE SOFTWARE.
 */
 #ifndef HERSHEY_H
 #define HERSHEY_H
-
+#include <stdio.h>
+#ifndef DISABLE_CAIRO
 #include <cairo.h>
+#endif
 
 typedef struct hershey_t
 	{
 	double scalex;
 	double scaley;
 	void* _priv;
+	
+	/** callback to get hershey string for charater 'code'. Default : NULL */
+	const char* (*getCodeFor)(int code);
+	/** postcript move operator.  Default: NULL = moveto */
+	char* ps_moveto;
+	/** postcript line operator.  Default: NULL = lineto */
+	char* ps_lineto;
 	}Hershey,*HersheyPtr;
 
 HersheyPtr HersheyNew();
 void HersheyFree(HersheyPtr ptr);
-void HersheyPaint(
+
+#ifndef DISABLE_CAIRO
+void HersheyCairoPaint(
 	HersheyPtr ptr,
 	cairo_t *cr,
 	const char* s,
 	double x, double y,
 	double width, double height
 	);
+#endif
+
+
+void HersheyPSPaintString(
+	HersheyPtr ptr,
+	FILE* out,
+	const char* s,
+	double x, double y,
+	double width, double height
+	);
+
+void HersheyPSPaintChar(
+	HersheyPtr ptr,
+	FILE* out,
+	int character,
+	double x, double y,
+	double width, double height
+	);
+
 #endif

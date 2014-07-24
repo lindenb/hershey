@@ -78,7 +78,7 @@ void HersheyFree(HersheyPtr p)
 
 
 	 
-static const char* charToHersheyString(char c)
+static const char* charToHersheyString(int c)
 		{
 		switch(c)
 			{
@@ -148,15 +148,21 @@ static const char* charToHersheyString(char c)
 		};
 	
 	
-static void charToPathOp(HersheyPtr ptr,char letter)
+static void charToPathOp(HersheyPtr ptr,int letter)
 		{
 		size_t i;
 		CAST_ARRAY(ptr)->size=0UL;
 		if(letter==' ') return ;
-		const char* s= charToHersheyString(letter);
+		const char* s= ptr->getCodeFor==NULL?
+				charToHersheyString(letter):
+				ptr->getCodeFor((int)letter)
+				;
 		
-		if(s==NULL) return;
-		
+		if(s==NULL)
+			{
+			return;
+			}
+
 		int num_vertices=0;
 		for( i=0;i< 3;++i)
 			{
@@ -200,8 +206,8 @@ static void charToPathOp(HersheyPtr ptr,char letter)
 			}
 		};
 
-
-void HersheyPaint(
+#ifndef DISABLE_CAIRO
+void HersheyCairoPaint(
 	HersheyPtr ptr,
 	cairo_t *ctx,
 	const char* s,
@@ -209,11 +215,12 @@ void HersheyPaint(
 	double width, double height
 	)
 	{
+	size_t s_length,i,n;
 	if(s==NULL || width==0 || height==0) return;
-	size_t s_length=strlen(s);
+	s_length=strlen(s);
 	if(s_length==0) return;
 	
-	size_t i=0,n;
+
 	double dx=width/s_length;
 	for(i=0;i < s_length;++i)
 		{
@@ -239,6 +246,68 @@ void HersheyPaint(
 		}
 	
 	}
+#endif
+
+
+void HersheyPSPaintString(
+	HersheyPtr ptr,
+	FILE* out,
+	const char* s,
+	double x, double y,
+	double width, double height
+	)
+	{
+	size_t s_length,i;
+	if(s==NULL || width==0 || height==0) return;
+	s_length=strlen(s);
+	if(s_length==0) return;
+	
+	double dx=width/s_length;
+	for(i=0;i < s_length;++i)
+		{
+		HersheyPSPaintChar(
+			ptr,out,s[i],
+			x,y,dx,height
+			);
+		x+=dx;
+		}
+	}
+
+void HersheyPSPaintChar(
+	HersheyPtr ptr,
+	FILE* out,
+	int character,
+	double x, double y,
+	double width, double height
+	)
+	{
+	size_t n;
+	OperatorArrayPtr array;
+	if(character < 0) return; 
+	charToPathOp(ptr,character);
+	array=CAST_ARRAY(ptr);
+	
+	for(n=0;n< array->size;++n)
+		{
+		OperatorPtr p2= &array->data[n];
+		double x2= x+ (p2->x/ptr->scalex)*width  + width/2.0;
+		double y2= y+ height-((p2->y/ptr->scaley)*height + height/2.0) ;
+		
+
+		fprintf(out,"%f %f ",x2,y2);
+		
+		if(p2->operator == LINETO)
+			{
+			fputs(ptr->ps_lineto==NULL?"lineto":ptr->ps_lineto,out);
+			}
+		else
+			{
+			fputs(ptr->ps_moveto==NULL?"moveto":ptr->ps_moveto,out);
+			}
+		fputc(' ',out);
+		}
+	}
+
 #ifdef TEST_THIS_CODE
 int main(void)
 	{
@@ -251,7 +320,7 @@ int main(void)
         cairo_set_source_rgb (cr, 0.1, 0.2, 0.3);
 
 	
-        HersheyPaint(ptr,cr,"Hello World",10,10,150,90);
+        HersheyCairoPaint(ptr,cr,"Hello World",10,10,150,90);
         cairo_stroke (cr);
         
          cairo_surface_write_to_png (surface, "jeter.png");
