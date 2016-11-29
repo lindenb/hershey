@@ -37,19 +37,20 @@
 </xsl:attribute>
 
 <svg:rect class="frame">
-<xsl:attribute name="title">
-<xsl:apply-templates select="@id"/>
-</xsl:attribute>
 <xsl:attribute name="width"><xsl:value-of select="$size"/></xsl:attribute>
 <xsl:attribute name="height"><xsl:value-of select="$size"/></xsl:attribute>
+<svg:title>
+<xsl:apply-templates select="@id"/>
+</svg:title>
 </svg:rect>
 <svg:path class="glyph">
-
 
 <xsl:attribute name="d">
 <xsl:apply-templates select="lineto|moveto"/>
 </xsl:attribute>
-
+<svg:title>
+<xsl:apply-templates select="@id"/>
+</svg:title>
 </svg:path>
 </svg:g>
 
@@ -61,21 +62,27 @@
 <xsl:attribute name="xlink:href"><xsl:value-of select= "concat('#',@id)"/></xsl:attribute>
 <xsl:attribute name="x">0</xsl:attribute>
 <xsl:attribute name="y"><xsl:value-of select= "$size * (position() - 1)"/></xsl:attribute>
-<xsl:attribute name="title"><xsl:value-of select="@id"/></xsl:attribute>
+<svg:title>
+<xsl:apply-templates select="@id"/>
+</svg:title>
 </svg:use>
 
 <svg:use>
 <xsl:attribute name="xlink:href"><xsl:value-of select= "concat('#',@id)"/></xsl:attribute>
 <xsl:attribute name="x"><xsl:value-of select= "$size * 1"/></xsl:attribute>
 <xsl:attribute name="y"><xsl:value-of select= "$size * (position() - 1)"/></xsl:attribute>
-<xsl:attribute name="title"><xsl:value-of select="@id"/></xsl:attribute>
+<svg:title>
+<xsl:apply-templates select="@id"/>
+</svg:title>
 </svg:use>
 
 <svg:use>
 <xsl:attribute name="xlink:href"><xsl:value-of select= "concat('#',@id)"/></xsl:attribute>
 <xsl:attribute name="x"><xsl:value-of select= "$size * 2"/></xsl:attribute>
 <xsl:attribute name="y"><xsl:value-of select= "$size * (position() - 1)"/></xsl:attribute>
-<xsl:attribute name="title"><xsl:value-of select="@id"/></xsl:attribute>
+<svg:title>
+<xsl:apply-templates select="@id"/>
+</svg:title>
 </svg:use>
 
 </xsl:for-each>
